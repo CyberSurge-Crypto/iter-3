@@ -1,5 +1,8 @@
 import { useState } from "react";
 import Banner from "./Banner";
+import BlockchainView from "./BlockchainView";
+import Log from "./Log";
+import Pool from "./Pool";
 
 export default function Blockchain() {
   const [user_key, setUserKey] = useState<string>("example_key");
@@ -15,7 +18,7 @@ export default function Blockchain() {
             className="border p-3 bg-light"
             style={{ height: "30vh", overflowY: "auto" }}
           >
-            BlockchainView
+            <BlockchainView />
           </div>
         </div>
       </div>
@@ -25,13 +28,13 @@ export default function Blockchain() {
         <div className="col-6">
           <div className="border p-3 bg-white h-100 overflow-auto">
             <h5>Notification Log</h5>
-            Log View
+            <Log />
           </div>
         </div>
         <div className="col-6">
           <div className="border p-3 bg-white h-100 overflow-auto">
             <h5>Transaction Pool</h5>
-            TransactionPool
+            <Pool />
           </div>
         </div>
       </div>
