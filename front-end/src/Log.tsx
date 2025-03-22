@@ -20,8 +20,12 @@ export default function Log({ messages }: LogProps) {
   return (
     <div
       ref={logRef}
-      className="h-100 overflow-auto bg-dark text-light p-2 rounded"
-      style={{ fontFamily: "monospace", fontSize: "0.9rem" }}
+      className="overflow-auto bg-dark text-light p-2 rounded"
+      style={{
+        fontFamily: "monospace",
+        fontSize: "0.9rem",
+        height: "400px",
+      }}
     >
       {messages.map((msg, index) => (
         <div
