@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Banner from "./Banner";
 import BlockchainView from "./BlockchainView";
 import Log from "./Log";
 import Pool from "./Pool";
 import blockchainData from "./blockchain.json";
+import { mineBlock } from "../util/api"
 
 export default function Blockchain() {
   const [user_key, setUserKey] = useState<string>("example_key");
@@ -14,6 +15,12 @@ export default function Blockchain() {
     "System initialized...",
     "Listening for peers...",
   ]);
+
+  useEffect(() => {
+    // TODO:
+    // load Public key (once), 
+    // balance, pool, and logs (periodalcally), 
+  }, [])
 
   const addLog = () => {
     setLogs((prev) => [
@@ -43,13 +50,16 @@ export default function Blockchain() {
   ]);
 
   // Example mine handler
-  const handleMine = () => {
+  const handleMine = async () => {
     setLogs((prev) => [
       ...prev,
       `⛏️ Mining ${transactionPool.length} transaction(s)...`,
     ]);
     // Later: trigger mining logic here
+    const mineBlockResponse = await mineBlock();
+    
   };
+  
   return (
     <div className="container">
       <Banner publicKey={user_key} balance={balance} />
