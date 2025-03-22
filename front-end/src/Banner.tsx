@@ -4,13 +4,15 @@ import { Modal, Button, Form } from "react-bootstrap";
 type BannerProps = {
   publicKey: string;
   balance: number;
+  countDown: number;
 };
 
-export default function Banner({ publicKey, balance }: BannerProps) {
+export default function Banner({ publicKey, balance, countDown }: BannerProps) {
   const [show, setShow] = useState(false);
   const [sender, setSender] = useState("");
   const [receiver, setReceiver] = useState("");
   const [amount, setAmount] = useState(0);
+  const [showKey, setShowKey] = useState(false);
 
   const handleTransaction = () => {
     console.log("Transaction Data:", { sender, receiver, amount });
@@ -22,8 +24,15 @@ export default function Banner({ publicKey, balance }: BannerProps) {
     <>
       <div className="d-flex justify-content-between align-items-center bg-dark text-white p-3 rounded">
         <div>
-          <strong>Public Key:</strong> {publicKey}
+          <strong>Public Key: </strong>
+          <button
+            className="btn btn-secondary btn-sm"
+            onClick={() => setShowKey(true)}
+          >
+            Show
+          </button>
         </div>
+        <div>Page update in {countDown} s</div>
         <div className="d-flex align-items-center gap-3">
           <strong>Balance:</strong> {balance} 🪙
           <button className="btn btn-success" onClick={() => setShow(true)}>
@@ -75,6 +84,27 @@ export default function Banner({ publicKey, balance }: BannerProps) {
           </Button>
           <Button variant="primary" onClick={handleTransaction}>
             Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Public Key Modal */}
+      <Modal show={showKey} onHide={() => setShowKey(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Your Public Key</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Control
+            type="text"
+            value={publicKey}
+            readOnly
+            onClick={(e) => (e.target as HTMLInputElement).select()}
+          />
+          <small className="text-muted">Click to select and copy.</small>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowKey(false)}>
+            Close
           </Button>
         </Modal.Footer>
       </Modal>
