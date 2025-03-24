@@ -9,8 +9,7 @@ import { mineBlock } from "../util/api"
 export default function Blockchain() {
   const [user_key, setUserKey] = useState<string>("example_key");
   const [balance, setBalance] = useState<number>(0);
-
-  // Example Log message
+  const [countdown, setCountDown] = useState(5);
   const [logs, setLogs] = useState<string[]>([
     "System initialized...",
     "Listening for peers...",
@@ -59,10 +58,30 @@ export default function Blockchain() {
     const mineBlockResponse = await mineBlock();
     
   };
-  
+
+  const fetchData = async () => {
+    // simulation for fetching data
+    await new Promise(resolve => setTimeout(resolve, 3000));
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCountDown(prev => {
+        if (prev <= 1) {
+          fetchData();
+          return 5;
+        } else {
+          return prev - 1;
+        }
+      });
+    }, 1000); // Tick every second
+
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
+
   return (
     <div className="container">
-      <Banner publicKey={user_key} balance={balance} />
+      <Banner publicKey={user_key} balance={balance} countDown={countdown} />
       {/* Blockchain View - full width */}
       <div className="row mt-3">
         <div className="col-12">
