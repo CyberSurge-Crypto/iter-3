@@ -3,23 +3,19 @@ import Banner from "./Banner";
 import BlockchainView from "./BlockchainView";
 import Log from "./Log";
 import Pool from "./Pool";
-import blockchainData from "./blockchain.json";
-import { mineBlock } from "../util/api"
+import initBlockchainData from "./blockchain.json";
+import { Block, Transaction } from "../util/types"
+import { fetchBlockchain, fetchLogs, fetchTransactionPool, fetchUserBalance, mineBlock } from "../util/api"
 
 export default function Blockchain() {
   const [user_key, setUserKey] = useState<string>("example_key");
   const [balance, setBalance] = useState<number>(0);
-  const [countdown, setCountDown] = useState(5);
+  const [countdown, setCountDown] = useState<number>(5);
   const [logs, setLogs] = useState<string[]>([
     "System initialized...",
     "Listening for peers...",
   ]);
-
-  useEffect(() => {
-    // TODO:
-    // load Public key (once), 
-    // balance, pool, and logs (periodalcally), 
-  }, [])
+  const [blockchainData, setBlockchainData] = useState<Block[]>([])
 
   const addLog = () => {
     setLogs((prev) => [
@@ -29,7 +25,7 @@ export default function Blockchain() {
   };
   
   // Example pool data
-  const [transactionPool, setTransactionPool] = useState([
+  const [transactionPool, setTransactionPool] = useState<Transaction[]>([
     {
       transaction_id: "tx1",
       timestamp:"2025-03-21T13:29:31.563389",
@@ -59,16 +55,26 @@ export default function Blockchain() {
     
   };
 
-  const fetchData = async () => {
-    // simulation for fetching data
-    await new Promise(resolve => setTimeout(resolve, 3000));
-  };
-
   useEffect(() => {
+
+    setUserKey("Sample load");
+
+    const fetchNetworkData = async () => {
+      const logs = await fetchLogs();
+      const userBalance = await fetchUserBalance();
+      const blockchain = await fetchBlockchain();
+      const transactionPool = await fetchTransactionPool();
+      setLogs(logs);
+      setBalance(userBalance);
+      setBlockchainData(blockchain);
+      setTransactionPool(transactionPool);
+    };
+
+
     const interval = setInterval(() => {
       setCountDown(prev => {
         if (prev <= 1) {
-          fetchData();
+          fetchNetworkData();
           return 5;
         } else {
           return prev - 1;
@@ -89,7 +95,7 @@ export default function Blockchain() {
             className="border p-3 bg-light"
             style={{ height: "40vh", overflowY: "auto" }}
           >
-            <BlockchainView chain={blockchainData[0].chain} />
+            <BlockchainView chain={blockchainData} />
           </div>
         </div>
       </div>
