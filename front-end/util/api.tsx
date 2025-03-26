@@ -14,7 +14,7 @@ const api = axios.create({
 /**
  * send a new Transaction POST request to the API
  * @param txn the transaction request 
- * @returns transaction sending status: 
+ * @returns {Boolean} transaction sending status: 
  *      if successfully sending a transaction, return true,
  *      if the sending failed, return false
  */
@@ -32,7 +32,7 @@ export const sendTransaction = async (txn: TransactionRequest): Promise<any> => 
 /**
  * send a mine-block POST request to the backend API
  * @param None
- * @returns a new Block in the format of JSON
+ * @returns {Object} a new Block in the format of JSON
  */
 export const mineBlock = async () => {
     try {
@@ -48,7 +48,7 @@ export const mineBlock = async () => {
 /**
  * send a balance GET request to the backend API
  * @param None
- * @returns an integer if the request is handled successfully
+ * @returns {Number} an integer if the request is handled successfully
  */
 export const fetchUserBalance = async () => {
     try {
@@ -62,15 +62,14 @@ export const fetchUserBalance = async () => {
 }
 
 /**
- * send a blockchain and transaction pool GET request to the backend API
+ * send a blockchain GET request to the backend API
  * @param None
- * @returns a JSON that
+ * @returns {Object} a JSON that
  *      shows blocks that the p2p node has confirmed
- *      and the 
  */
-export const fetchBlockchainAndPool = async () => {
+export const fetchBlockchain = async () => {
     try {
-        const blockchain = await api.get("/blockchain-pool");
+        const blockchain = await api.get("/blockchain");
         console.log("[fetchBlockchain] result", blockchain);
         return blockchain;
     } catch (error) {
@@ -80,17 +79,18 @@ export const fetchBlockchainAndPool = async () => {
 }
 
 /**
- * send a pending transaction GET request to the backend API
+ * send a transaction pool GET request to the backend API
  * @param None
- * @returns a JSON list of pending transactions
+ * @returns {Object} a JSON that
+ *      shows the transactions that have not been mined
  */
-export const fetchPendingTransactions = async () => {
+export const fetchTransactionPool = async () => {
     try {
-        const pendingTransactions = await api.get("/pending-transactions");
-        console.log("[fetchPendingTransactions] result", pendingTransactions);
-        return pendingTransactions;
+        const transactionPool = await api.get("/transaction-pool");
+        console.log("[fetchTransactionPool] result", transactionPool);
+        return transactionPool;
     } catch (error) {
-        console.error("[fetchPendingTransactions] error", error);
+        console.error("[fetchTransactionPool] error", error);
         throw error;
     }
 }
@@ -98,7 +98,7 @@ export const fetchPendingTransactions = async () => {
 /**
  * send a log GET request to the backend API
  * @param None
- * @returns the logs of the backend, including P2P network behaviors and blockchain behaviors
+ * @returns {Array} the logs of the backend, including P2P network behaviors and blockchain behaviors
  */
 export const fetchLogs = async () => {
     try {
