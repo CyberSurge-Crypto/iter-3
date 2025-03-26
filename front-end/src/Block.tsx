@@ -1,10 +1,4 @@
-type Transaction = {
-  transaction_id: string;
-  sender: string;
-  receiver: string;
-  amount: number;
-  state: string;
-};
+import { Transaction } from "../util/types";
 
 type BlockProps = {
   index: number;

@@ -1,11 +1,4 @@
-type Transaction = {
-  transaction_id: string;
-  timestamp: string;
-  sender: string;
-  receiver: string;
-  amount: number;
-  signature: string;
-};
+import { Transaction } from "../util/types";
 
 type TransactionPoolProps = {
   transactions: Transaction[];
