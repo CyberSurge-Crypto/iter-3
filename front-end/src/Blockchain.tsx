@@ -5,7 +5,7 @@ import Log from "./Log";
 import Pool from "./Pool";
 import initBlockchainData from "./blockchain.json";
 import { Block, Transaction } from "../util/types"
-import { fetchBlockchain, fetchLogs, fetchTransactionPool, fetchUserBalance, mineBlock } from "../util/api"
+import { fetchBlockchain, fetchLogs, fetchTransactionPool, fetchAddress, fetchUserBalance, mineBlock } from "../util/api"
 
 export default function Blockchain() {
   const [user_key, setUserKey] = useState<string>("example_key");
@@ -60,11 +60,18 @@ export default function Blockchain() {
     setUserKey("Sample load");
 
     const fetchNetworkData = async () => {
-      const logs = await fetchLogs();
-      const userBalance = await fetchUserBalance();
+      const logs = ["123"];
+      const address = await fetchAddress();
+      const userBalance = await fetchUserBalance(address);
       const blockchain = await fetchBlockchain();
       const transactionPool = await fetchTransactionPool();
+      console.log(logs)
+      console.log(address)
+      console.log(userBalance)
+      console.log(blockchain)
+      console.log(transactionPool)
       setLogs(logs);
+      setUserKey(address)
       setBalance(userBalance);
       setBlockchainData(blockchain);
       setTransactionPool(transactionPool);
@@ -75,7 +82,7 @@ export default function Blockchain() {
       setCountDown(prev => {
         if (prev <= 1) {
           fetchNetworkData();
-          return 5;
+          return 10;
         } else {
           return prev - 1;
         }

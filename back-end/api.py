@@ -3,13 +3,22 @@ import logging
 
 from models.Response import success_response, error_response
 from models.Request import SendTransactionRequest
-
+from fastapi.middleware.cors import CORSMiddleware
 from setup import user, p2p_node, logs_filename
 
 logging.basicConfig(filename=logs_filename, level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = fastapi.FastAPI()
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # or ["http://localhost:8000"] for stricter control
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def read_root():
@@ -49,9 +58,9 @@ def mine_block():
     return error_response("Failed to mine block")
 
 @app.get("/user-balance")
-def user_balance(address: str):
+def user_balance():
   return success_response({
-    "balance": p2p_node.blockchain.get_balance(address)
+    "balance": p2p_node.blockchain.get_balance(user.address)
   })
 
 @app.get("/pending-transactions")

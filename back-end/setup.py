@@ -15,7 +15,7 @@ def setup(p2p_host: str, p2p_port: int):
     user = User()
     p2p_node = PeerNode(p2p_host, p2p_port, max_connections=999, callback=node_callback)
 
-    logging.basicConfig(filename=logs_filename, level=logging.INFO)
+    logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
 
     p2p_node.debug = True
