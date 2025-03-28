@@ -151,7 +151,7 @@ class Blockchain:
     def mine_pending_transactions(self) -> Block:
         """Mine all pending transactions into a new block"""
         if not self.pending_transactions:
-            return
+            return None
             
         new_block = Block(
             index=len(self.chain),
@@ -165,3 +165,6 @@ class Blockchain:
         self.pending_transactions = []
         
         return new_block
+    
+    def get_chain_as_json(self):
+        return [block.to_dict() for block in self.chain]

@@ -28,4 +28,3 @@ class Transaction:
             "state": self.state.value,
             "signature": self.signature
         }
-    

@@ -41,4 +41,3 @@ class Block:
             "nonce": self.nonce,
             "hash": self.hash
         }
-    

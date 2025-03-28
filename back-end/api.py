@@ -1,9 +1,13 @@
 import fastapi
-import uvicorn
+import logging
 
-from bcf import user, blockchain, Transaction
 from models.Response import success_response, error_response
-from models.Request import SendTransactionRequest, MineBlockRequest
+from models.Request import SendTransactionRequest
+
+from setup import user, p2p_node
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = fastapi.FastAPI()
 
@@ -17,40 +21,65 @@ def read_root():
 def send_transaction(request: SendTransactionRequest):
   try:
     transaction = user.start_transaction(request.receiver_address, request.amount)
-    blockchain.pending_transactions.append(transaction)
+    p2p_node.blockchain.pending_transactions.append(transaction)
+
+    # broadcast transaction to all peers
+    p2p_node.save_blockchain(p2p_node.blockchain)
+    p2p_node.broadcast_transaction(transaction.to_dict())
+
     return success_response({
-      "transaction": transaction
+      "transaction": transaction.to_dict()
     })
   except Exception as e:
-    return error_response(e)
+    return error_response(str(e))
 
 @app.post("/mine-block")
 def mine_block():
-  blockchain.mine_block()
-  return success_response(None)
+  new_block = p2p_node.blockchain.mine_pending_transactions()
+  if new_block is not None:
+    if p2p_node.blockchain.add_block(new_block):
+      p2p_node.save_blockchain(p2p_node.blockchain)
+      p2p_node.broadcast_block(new_block.to_dict())
+      return success_response({
+        "block": new_block.to_dict()
+      })
+    else:
+      return error_response("Failed to add block")
+  else:
+    return error_response("Failed to mine block")
 
 @app.get("/user-balance")
-def user_balance(address):
+def user_balance(address: str):
   return success_response({
-    "balance": blockchain.get_balance(address)
+    "balance": p2p_node.blockchain.get_balance(address)
   })
 
 @app.get("/pending-transactions")
 def pending_transactions():
+  transactions = [tx.to_dict() for tx in p2p_node.blockchain.pending_transactions]
   return success_response({
-    "pending_transactions": blockchain.pending_transactions
+    "pending_transactions": transactions
   })
 
 @app.get("/logs")
 def logs():
   pass
 
-@app.get("/transaction-pools")
-def transaction_pools():
+@app.get("/transaction-pool")
+def transaction_pool():
+  transactions = [tx.to_dict() for tx in p2p_node.blockchain.pending_transactions]
   return success_response({
-    "transaction_pools": blockchain.transaction_pools
+    "transaction_pool": transactions
   })
 
+@app.get("/blockchain")
+def blockchain():
+  return success_response({
+    "blockchain": p2p_node.blockchain.get_chain_as_json()
+  })
 
-if __name__ == "__main__":
-  uvicorn.run(app, host="0.0.0.0", port=8000)
+@app.get("/address")
+def address():
+  return success_response({
+    "address": user.get_address()
+  })

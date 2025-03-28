@@ -1,0 +1,25 @@
+[
+  {
+    "chain": [
+      {
+        "index": 0,
+        "transactions": [
+          {
+            "transaction_id": "5ab2ee3f624909dac0d1b2444509098418c0725c73ec52d029e7b8df9b942c2d",
+            "timestamp": "2025-03-28T00:35:30.979231",
+            "sender": "genesis",
+            "receiver": "genesis",
+            "amount": 0,
+            "state": "started",
+            "signature": null
+          }
+        ],
+        "timestamp": 1743147331.072355,
+        "previous_hash": "0",
+        "nonce": 0,
+        "hash": "34cc9986acf5c589e194562f610a4e6a0a216ae8c2b2943044b5ee1585f4b7bc"
+      }
+    ],
+    "pending_transactions": []
+  }
+]
