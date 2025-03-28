@@ -63,7 +63,10 @@ def pending_transactions():
 
 @app.get("/logs")
 def logs():
-  pass
+  with open(logs_filename, "r") as f:
+    return success_response({
+      "logs": f.read()
+    })
 
 @app.get("/transaction-pool")
 def transaction_pool():

@@ -1,4 +1,5 @@
 import copy
+import os
 from bcf import Blockchain, User, Transaction, SYSTEM
 from p2p import PeerNode, node_callback
 import logging
@@ -14,6 +15,9 @@ def setup(p2p_host: str, p2p_port: int):
 
     user = User()
     p2p_node = PeerNode(p2p_host, p2p_port, max_connections=999, callback=node_callback)
+
+    # create logs directory if it doesn't exist
+    os.makedirs(os.path.dirname(logs_filename), exist_ok=True)
 
     logging.basicConfig(filename=logs_filename, level=logging.INFO)
     logger = logging.getLogger(__name__)
