@@ -2,8 +2,11 @@ from api import app
 import uvicorn
 import argparse
 import logging
+import copy
 
 from p2p import StaticNode, PeerNode, STATIC_NODE_IP, STATIC_NODE_PORT, node_callback
+
+from bcf import Blockchain
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -26,11 +29,20 @@ if __name__ == "__main__":
     else:
         logger.info(f"P2P server not started")
 
+    # run p2p node
     p2p_node = PeerNode(args.host, args.p2p_port, max_connections=999, callback=node_callback)
+
+    blockchain = Blockchain()
+    p2p_node.blockchain = copy.deepcopy(blockchain)
+    p2p_node.save_blockchain(p2p_node.blockchain)
+    logger.info(f"Blockchain saved")
+
     p2p_node.debug = True
     p2p_node.start()
     logger.info(f"P2P node started on {args.host}:{args.p2p_port}")
+
     p2p_node.register()
     logger.info(f"P2P node registered")
 
+    # run api server
     uvicorn.run(app, host=args.host, port=args.port)
