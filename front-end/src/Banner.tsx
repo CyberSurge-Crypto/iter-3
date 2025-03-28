@@ -10,7 +10,7 @@ type BannerProps = {
 
 export default function Banner({ publicKey, balance, countDown }: BannerProps) {
   const [show, setShow] = useState(false);
-  const [sender, setSender] = useState("");
+  const [sender, setSender] = useState("current_user");
   const [receiver, setReceiver] = useState("");
   const [amount, setAmount] = useState(0);
   const [showKey, setShowKey] = useState(false);
@@ -51,16 +51,6 @@ export default function Banner({ publicKey, balance, countDown }: BannerProps) {
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group className="mb-3">
-              <Form.Label>Sender</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter sender public key"
-                value={sender}
-                onChange={(e) => setSender(e.target.value)}
-              />
-            </Form.Group>
-
             <Form.Group className="mb-3">
               <Form.Label>Receiver</Form.Label>
               <Form.Control
