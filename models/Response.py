@@ -1,8 +1,9 @@
 from pydantic import BaseModel
+from typing import Any, Optional
 
 class StandardResponse(BaseModel):
-    data: any = None
-    error: str = None
+    data: Optional[Any] = None
+    error: Optional[str] = None
   
 
 def success_response(data: any):

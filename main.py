@@ -6,7 +6,7 @@ import copy
 
 from p2p import StaticNode, PeerNode, STATIC_NODE_IP, STATIC_NODE_PORT, node_callback
 
-from bcf import Blockchain
+from bcf import blockchain
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -32,7 +32,6 @@ if __name__ == "__main__":
     # run p2p node
     p2p_node = PeerNode(args.host, args.p2p_port, max_connections=999, callback=node_callback)
 
-    blockchain = Blockchain()
     p2p_node.blockchain = copy.deepcopy(blockchain)
     p2p_node.save_blockchain(p2p_node.blockchain)
     logger.info(f"Blockchain saved")
