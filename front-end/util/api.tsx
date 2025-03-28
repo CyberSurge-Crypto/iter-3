@@ -15,7 +15,7 @@ const api = axios.create({
  */
 export const sendTransaction = async (txn: TransactionRequest): Promise<boolean> => {
     try {
-        const response = await api.post("/send-transaction", txn);
+        const response = await api.post("/send-transaction",{...txn});
         console.log("[sendTransaction] result", response);
         if(response.data.error){
             throw response.data.error
@@ -115,7 +115,7 @@ export const fetchTransactionPool = async (): Promise<Array<Transaction>> => {
  * @param None
  * @returns {Array<string>} the logs of the backend, including P2P network behaviors and blockchain behaviors
  */
-export const fetchLogs = async (): Promise<Array<string>> => {
+export const fetchLogs = async (): Promise<string> => {
     try {
         const response = await api.get("/logs");
         console.log("[fetchLogs] result", response);

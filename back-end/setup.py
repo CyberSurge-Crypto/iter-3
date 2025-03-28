@@ -14,7 +14,7 @@ def setup(p2p_host: str, p2p_port: int):
     global user, p2p_node, logs_filename
 
     user = User()
-    p2p_node = PeerNode(p2p_host, p2p_port, max_connections=999, callback=node_callback)
+    p2p_node = PeerNode(p2p_host, p2p_port, logfilename=logs_filename, max_connections=999, callback=node_callback)
 
     # create logs directory if it doesn't exist
     os.makedirs(os.path.dirname(logs_filename), exist_ok=True)

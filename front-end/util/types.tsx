@@ -1,6 +1,6 @@
 export type TransactionRequest = {
-    sender: string;
-    receiver: string;
+    sender_address: string;
+    receiver_address: string;
     amount: number | string;
 };
 

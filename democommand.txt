@@ -1,0 +1,9 @@
+python main.py --static-node
+
+python main.py --host localhost --port 2000 --p2p-port 1000
+python main.py --host localhost --port 2001 --p2p-port 1001
+python main.py --host localhost --port 2002 --p2p-port 1002
+
+npm run demo port 8000 api 2000
+npm run demo port 8001 api 2001
+npm run demo port 8002 api 2002

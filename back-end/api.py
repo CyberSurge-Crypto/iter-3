@@ -36,13 +36,13 @@ def send_transaction(request: SendTransactionRequest):
     p2p_node.save_blockchain(p2p_node.blockchain)
     p2p_node.broadcast_transaction(transaction.to_dict())
 
-    logger.info(f"Transaction sent: {transaction.to_dict()}")
+    #logger.info(f"Transaction sent: {transaction.to_dict()}")
 
     return success_response({
       "transaction": transaction.to_dict()
     })
   except Exception as e:
-    logger.info(f"Error sending transaction: {e}")
+    #logger.info(f"Error sending transaction: {e}")
     return error_response(str(e))
 
 @app.post("/mine-block")
@@ -53,20 +53,20 @@ def mine_block():
       p2p_node.save_blockchain(p2p_node.blockchain)
       p2p_node.broadcast_block(new_block.to_dict())
 
-      logger.info(f"Block mined")
+      ##logger.info(f"Block mined")
       return success_response({
         "block": new_block.to_dict()
       })
     else:
-      logger.info("Failed to add block")
+      ##logger.info("Failed to add block")
       return error_response("Failed to add block")
   else:
-    logger.info("Failed to mine block")
+    ##logger.info("Failed to mine block")
     return error_response("Failed to mine block")
 
 @app.get("/user-balance")
 def user_balance(address: str):
-  logger.info(f"User balance requested for address: {address[:5]}...")
+  ##logger.info(f"User balance requested for address: {address[:5]}...")
   return success_response({
     "balance": p2p_node.blockchain.get_balance(address)
   })
@@ -74,7 +74,7 @@ def user_balance(address: str):
 @app.get("/pending-transactions")
 def pending_transactions():
   transactions = [tx.to_dict() for tx in p2p_node.blockchain.pending_transactions]
-  logger.info("Pending transactions requested")
+  ##logger.info("Pending transactions requested")
   return success_response({
     "pending_transactions": transactions
   })
@@ -89,21 +89,21 @@ def logs():
 @app.get("/transaction-pool")
 def transaction_pool():
   transactions = [tx.to_dict() for tx in p2p_node.blockchain.pending_transactions]
-  logger.info("Transaction pool requested")
+  ##logger.info("Transaction pool requested")
   return success_response({
     "transaction_pool": transactions
   })
 
 @app.get("/blockchain")
 def blockchain():
-  logger.info("Blockchain requested")
+  ##logger.info("Blockchain requested")
   return success_response({
     "blockchain": p2p_node.blockchain.get_chain_as_json()
   })
 
 @app.get("/address")
 def address():
-  logger.info("Address requested")
+  ##logger.info("Address requested")
   return success_response({
     "address": user.get_address()
   })

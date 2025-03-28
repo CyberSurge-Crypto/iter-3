@@ -18,7 +18,7 @@ export default function Banner({ publicKey, balance, countDown }: BannerProps) {
   const handleTransaction = async () => {
     console.log("[handleTransaction] Transaction Data:", { sender, receiver, amount });
     // TODO: Send transaction to backend here
-    const payload = {sender: sender, receiver: receiver, amount: amount};
+    const payload = {sender_address: sender, receiver_address: receiver, amount: amount};
     const response = await sendTransaction(payload);
     setShow(false); // Close modal
   };
