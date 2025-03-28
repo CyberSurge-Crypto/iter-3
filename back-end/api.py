@@ -4,9 +4,9 @@ import logging
 from models.Response import success_response, error_response
 from models.Request import SendTransactionRequest
 
-from setup import user, p2p_node
+from setup import user, p2p_node, logs_filename
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(filename=logs_filename, level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = fastapi.FastAPI()

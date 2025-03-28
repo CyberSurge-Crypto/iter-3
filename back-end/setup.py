@@ -2,18 +2,21 @@ import copy
 from bcf import Blockchain, User, Transaction, SYSTEM
 from p2p import PeerNode, node_callback
 import logging
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+import time
 
 user = None
 p2p_node = None
+logs_filename = time.strftime("logs/%Y-%m-%d_%H-%M-%S.log")
+
 
 def setup(p2p_host: str, p2p_port: int):
-    global user, p2p_node
+    global user, p2p_node, logs_filename
 
     user = User()
     p2p_node = PeerNode(p2p_host, p2p_port, max_connections=999, callback=node_callback)
+
+    logging.basicConfig(filename=logs_filename, level=logging.INFO)
+    logger = logging.getLogger(__name__)
 
     p2p_node.debug = True
     p2p_node.start()

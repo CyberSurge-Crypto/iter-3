@@ -1,12 +1,8 @@
 import uvicorn
 import argparse
-import logging
 
 from p2p import StaticNode, STATIC_NODE_IP, STATIC_NODE_PORT, node_callback
 from setup import setup
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Start the API server')
@@ -23,7 +19,6 @@ if __name__ == "__main__":
       static_node = StaticNode(STATIC_NODE_IP, STATIC_NODE_PORT, node_callback)
       static_node.debug = False
       static_node.start()
-      logger.info(f"Static node started on {STATIC_NODE_IP}:{STATIC_NODE_PORT}")
     else:
       setup(p2p_host=args.host, p2p_port=args.p2p_port)
 
