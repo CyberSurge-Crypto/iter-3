@@ -19,6 +19,7 @@ def setup(p2p_host: str, p2p_port: int):
     # create logs directory if it doesn't exist
     os.makedirs(os.path.dirname(logs_filename), exist_ok=True)
 
+    # save logs to file
     logging.basicConfig(filename=logs_filename, level=logging.INFO)
     logger = logging.getLogger(__name__)
 
