@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
+import { sendTransaction } from "../util/api"
 
 type BannerProps = {
   publicKey: string;
@@ -14,9 +15,11 @@ export default function Banner({ publicKey, balance, countDown }: BannerProps) {
   const [amount, setAmount] = useState(0);
   const [showKey, setShowKey] = useState(false);
 
-  const handleTransaction = () => {
-    console.log("Transaction Data:", { sender, receiver, amount });
+  const handleTransaction = async () => {
+    console.log("[handleTransaction] Transaction Data:", { sender, receiver, amount });
     // TODO: Send transaction to backend here
+    const payload = {sender: sender, receiver: receiver, amount: amount};
+    const response = await sendTransaction(payload);
     setShow(false); // Close modal
   };
 
