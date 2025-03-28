@@ -58,9 +58,9 @@ def mine_block():
     return error_response("Failed to mine block")
 
 @app.get("/user-balance")
-def user_balance():
+def user_balance(address: str):
   return success_response({
-    "balance": p2p_node.blockchain.get_balance(user.address)
+    "balance": p2p_node.blockchain.get_balance(address)
   })
 
 @app.get("/pending-transactions")
