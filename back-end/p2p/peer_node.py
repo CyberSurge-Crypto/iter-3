@@ -269,7 +269,7 @@ class PeerNode(Node):
         
         self.blockchain.pending_transactions.append(txn_data)
         self.save_blockchain(self.blockchain)
-        self.logger.info(f"[SYSTEM] Added new transaction: {txn_id} into local blockchain!")
+        self.logger.info(f"[SYSTEM] Added new transaction: {txn_id[:10]}... into transaction pool!")
         return
     
     def broadcast_block(self, block):
