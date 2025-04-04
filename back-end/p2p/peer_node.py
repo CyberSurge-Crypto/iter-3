@@ -41,11 +41,9 @@ class PeerNode(Node):
         tables = self.db.list_tables()
         
         if "blockchain" in tables:
-            self.logger.info("Blockchain found in local database. Loading...")
             blockchain_data = self.db.read("blockchain")
             return self.convert_to_blockchain(blockchain_data)
         else:
-            self.logger.info("No blockchain found locally. Initializing new blockchain...")
             return None
 
     def convert_to_blockchain(self, blockchain_data):
@@ -126,7 +124,6 @@ class PeerNode(Node):
 
         self.db.create_table("blockchain")
         self.db.update("blockchain", [blockchain_data])
-        self.logger.info("Blockchain successfully stored in database!")
 
         
 
@@ -141,8 +138,9 @@ class PeerNode(Node):
         """
         if self.debug:
             call_function = message.split(":")[0]
-            if call_function in self.debug_functions or "error" in message.lower():
-                self.logger.info("DEBUG (" + str(self.id)[:10] + "): \t" + message + '\n')
+            # if call_function in self.debug_functions or "error" in message.lower():
+            #     # self.logger.info("DEBUG (" + str(self.id)[:10] + "): \t" + message + '\n')
+            #     return
             # else:
             #     self.logger.info("DEBUG (" + str(self.id)[:10] + "): \t" +call_function + '\n')
 
@@ -189,7 +187,7 @@ class PeerNode(Node):
                     node_host = str(node_tuple[0])
                     node_port = int(node_tuple[1])
                     self.connect_with_node(node_host, node_port, reconnect=False)
-                    self.logger.info(f"Node {self.id} has connected all peers!")
+                    self.logger.info(f"[SYSTEM] Node {self.id[:10]}... has connected to all peers!")
         except Exception as e:
             self.debug_print(f"on_active_nodes: Error in active nodes: {str(e)}")
 
@@ -197,7 +195,7 @@ class PeerNode(Node):
             self.debug_print(f"on_active_nodes: pulled active user list | {self.nodes_outbound}")
             if len(self.nodes_outbound) > 1:
                 target_node = self.nodes_outbound[1]
-                self.logger.info(f"Node {self.id} is fetching blockchain!")
+                self.logger.info(f"[SYSTEM] Node {self.id[:10]}... is fetching blockchain!")
                 self.fetch_blockchain(target_node)
                 # TODO: Should fetch blockchain from all nodes?
                 # TODO: Should we fetch every time we connect to peers?
@@ -247,11 +245,11 @@ class PeerNode(Node):
         """Broadcast the transaction to all active nodes."""
         message = json.dumps({"type": "broadcast_transaction", "data": txn})
         self.send_to_nodes(message)
+        self.logger.info(f"[SENDING] Broadcasting a transaction...")
         return
     
     def on_broadcast_transaction(self, in_node, txn):
         """Receive the transaction broadcast from another node."""
-        self.debug_print(f"on_broadcast_transaction: {str(in_node.id)[:10]} broadcasted a transaction: {txn}.")
         txn_data = Transaction(
                 sender=txn["sender"],
                 receiver=txn["receiver"],
@@ -261,26 +259,28 @@ class PeerNode(Node):
                 signature=txn["signature"]
             )
         
+        self.logger.info(f"[RECEIVED] {str(in_node.id)[:10]}... broadcasted a transaction: ...{str(txn_data.sender)[-10:]} sends {txn_data.amount} coins to ...{str(txn_data.receiver)[-10:]}.")
+        
         txn_id = txn_data.transaction_id
         # Check if transaction already exists in pending transactions
         if any(tx.transaction_id == txn_id for tx in self.blockchain.pending_transactions):
-            self.logger.info(f"Duplicate transaction {txn_id} ignored.")
+            self.logger.info(f"[SYSTEM] Duplicate transaction received ignored.")
             return
         
         self.blockchain.pending_transactions.append(txn_data)
         self.save_blockchain(self.blockchain)
-        self.logger.info(f"Added new transaction: {txn_id} into database!")
+        self.logger.info(f"[SYSTEM] Added new transaction: {txn_id[:10]}... into transaction pool!")
         return
     
     def broadcast_block(self, block):
         """Broadcast the block to all active nodes."""
         message = json.dumps({"type": "broadcast_block", "data": block})
         self.send_to_nodes(message)
+        self.logger.info(f"[SENDING] Broadcasting the block #{block["index"]}...")
         return
     
     def on_broadcast_block(self, in_node, block):
         """Receive the block broadcast from another node."""
-        self.debug_print(f"on_broadcast_block: {str(in_node.id)[:10]} broadcasted a block: {block}.")
         # Ensure proper conversion from dict to Block object
         block_data = Block(
             index=block["index"],
@@ -296,8 +296,11 @@ class PeerNode(Node):
             previous_hash=block["previous_hash"],
             nonce=block["nonce"]
         )
+        
+        self.logger.info(f"[RECEIVED] {str(in_node.id)[:10]}... broadcasted the block #{block_data.index} with hash {block_data.hash[:10]}....")
+        
         if self.blockchain.add_block(block_data):
-            self.logger.info(f"Added new block: {block_data.index}")
+            self.logger.info(f"[SYSTEM] Added the new block  #{block_data.index}")
 
             # Remove transactions that were included in the new block
             block_transactions = {tx.transaction_id for tx in block_data.transactions}
@@ -315,13 +318,14 @@ class PeerNode(Node):
         try:
             message = json.dumps({"type": "fetch_blockchain", "data": self.id})
             self.send_to_node(out_node, message)
+            self.logger.info(f"[SENDING] Requsting a blockchain from {str(out_node.id)[:10]}....")
         except Exception as e:
             self.debug_print(f"fetch_blockchain: Error fetching blockchain: {str(e)}")
         return
 
     def on_fetch_blockchain(self, in_node):
         """Send the blockchain to the requesting node."""
-        self.debug_print(f"on_fetch_blockchain: {str(in_node.id)[:10]} requested the blockchain.")
+        self.logger.info(f"[RECEIVED] {str(in_node.id)[:10]}... requested the blockchain.")
 
         if self.blockchain is not None:
             try:
@@ -367,7 +371,7 @@ class PeerNode(Node):
                 message = json.dumps({"type": "receive_blockchain", "data": blockchain_json})
                 self.send_to_node(in_node, message)
                 
-                self.debug_print(f"on_fetch_blockchain: blockchain sent!.")
+                self.logger.info(f"[SENDING] Sending the blockchain to {str(in_node.id)[:10]}....")
             except Exception as e:
                 self.debug_print(f"on_fetch_blockchain: Error serializing blockchain: {str(e)}")
 
@@ -377,7 +381,7 @@ class PeerNode(Node):
     
     def on_receive_blockchain(self, in_node, content):
         """Receive the blockchain from another node and compare it with the local one."""
-        self.debug_print(f"on_receive_blockchain: {str(self.id)[:10]} received the blockchain.")
+        self.logger.info(f"[RECEIVED]: {str(in_node.id)[:10]}... just send the blockchain to this node.")
         try:
             # Deserialize received blockchain data
             received_blockchain_data = json.loads(content)
@@ -392,7 +396,7 @@ class PeerNode(Node):
             if received_chain_length > local_chain_length:
                 self.blockchain = received_blockchain
                 self.save_blockchain(self.blockchain)  # Store new blockchain in the database
-                self.logger.info("Local blockchain updated with a longer chain from peer.")
+                self.logger.info("[SYSTEM] Local blockchain updated with a longer chain from peer.")
             else:
                 self.debug_print("Local blockchain is already longer or equal. Ignoring received blockchain.")
 

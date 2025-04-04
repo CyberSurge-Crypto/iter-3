@@ -27,33 +27,33 @@ def setup(p2p_host: str, p2p_port: int):
     p2p_node.start()
 
     p2p_node.register()
-    logger.info(f"P2P node registered")
+    logger.info(f"[SETUP] P2P node registered")
 
     if len(p2p_node.all_nodes) == 0:
       blockchain = Blockchain()
       blockchain.create_genesis_block()
       p2p_node.blockchain = copy.deepcopy(blockchain)
       p2p_node.save_blockchain(p2p_node.blockchain)
-      logger.info(f"No nodes connected, created genesis block")
+      logger.info(f"[SETUP] No nodes connected, created genesis block")
     else:
       p2p_node.fetch_blockchain(p2p_node.all_nodes[0])
-      logger.info(f"Nodes connected: {p2p_node.all_nodes}")
+      logger.info(f"[SETUP] {len(p2p_node.all_nodes)} Nodes connected")
     
     # get airdrop for the user
     tx = Transaction(SYSTEM, user.get_address(), 100)
-    logger.info(f"Airdropping {tx.amount} to {user.get_address()}")
+    logger.info(f"[SETUP] Airdropping {tx.amount} to ...{user.get_address()[-10:]}")
     p2p_node.blockchain.pending_transactions.append(tx)
-    logger.info(f"Pending transactions: {p2p_node.blockchain.pending_transactions}")
+    logger.info(f"[SETUP] Pending transactions: {p2p_node.blockchain.pending_transactions}")
     new_block = p2p_node.blockchain.mine_pending_transactions()
     if new_block is not None:
-      logger.info(f"Mined block: {new_block.to_dict()}")
+      logger.info(f"[SETUP] Mined block: #{new_block.index}")
       if p2p_node.blockchain.add_block(new_block):
         p2p_node.save_blockchain(p2p_node.blockchain)
         p2p_node.broadcast_block(new_block.to_dict())
-        logger.info(f"Block added to blockchain and broadcasted")
+        logger.info(f"[SETUP] Block added to blockchain and broadcasted")
       else:
-        logger.info(f"Failed to add block to blockchain")
+        logger.info(f"[SETUP] Failed to add block to blockchain")
     else:
-      logger.info(f"Failed to mine block")
+      logger.info(f"[SETUP] Failed to mine block")
 
-    logger.info(f"Setup complete")
+    logger.info(f"[SETUP] Setup complete")
