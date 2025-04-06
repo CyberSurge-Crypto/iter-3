@@ -153,7 +153,7 @@ class Blockchain:
         if not self.pending_transactions:
             return None
         
-        if(miner is not None): 
+        if miner is not None: 
             self.pending_transactions.append(Transaction(SYSTEM, miner, MINE_REWARD))
         
         new_block = Block(
