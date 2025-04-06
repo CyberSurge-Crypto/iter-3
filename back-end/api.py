@@ -47,7 +47,7 @@ def send_transaction(request: SendTransactionRequest):
 
 @app.post("/mine-block")
 def mine_block():
-  new_block = p2p_node.blockchain.mine_pending_transactions()
+  new_block = p2p_node.blockchain.mine_pending_transactions(user.get_address())
   if new_block is not None:
     if p2p_node.blockchain.add_block(new_block):
       p2p_node.save_blockchain(p2p_node.blockchain)

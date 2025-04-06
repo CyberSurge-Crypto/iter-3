@@ -3,7 +3,7 @@ from typing import List, Optional, Dict
 from .block import Block
 from .user import User
 from .transaction import Transaction
-from .constant import SYSTEM, DIFFICULTY, TransactionState
+from .constant import SYSTEM, DIFFICULTY, MINE_REWARD, TransactionState
 import time
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
@@ -148,11 +148,14 @@ class Blockchain:
         user = next((user for user in self.users if user.address == address), None)
         return user.get_public_key() if user else None
 
-    def mine_pending_transactions(self) -> Block:
+    def mine_pending_transactions(self, miner: str) -> Block:
         """Mine all pending transactions into a new block"""
         if not self.pending_transactions:
             return None
-            
+        
+        if(miner is not None): 
+            self.pending_transactions.append(Transaction(SYSTEM, miner, MINE_REWARD))
+        
         new_block = Block(
             index=len(self.chain),
             transactions=self.pending_transactions,

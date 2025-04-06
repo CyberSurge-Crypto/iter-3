@@ -44,7 +44,7 @@ def setup(p2p_host: str, p2p_port: int):
     logger.info(f"[SETUP] Airdropping {tx.amount} to ...{user.get_address()[-10:]}")
     p2p_node.blockchain.pending_transactions.append(tx)
     logger.info(f"[SETUP] Pending transactions: {p2p_node.blockchain.pending_transactions}")
-    new_block = p2p_node.blockchain.mine_pending_transactions()
+    new_block = p2p_node.blockchain.mine_pending_transactions(None)
     if new_block is not None:
       logger.info(f"[SETUP] Mined block: #{new_block.index}")
       if p2p_node.blockchain.add_block(new_block):
